@@ -10,27 +10,67 @@
                     <i class="bi bi-box-arrow-in-right"></i> Авторизация
                 </h2>
                 
-                <form method="post">
+                <form method="post" id="login-form" novalidate>
                     {% csrf_token %}
-                    
+
+                    <!-- Логин -->
                     <div class="mb-3">
                         <label for="id_username" class="form-label">Логин</label>
-                        <input type="text" name="username" id="id_username" 
-                               class="form-control" placeholder="Введите логин" required>
+                        <input
+                            type="text"
+                            name="username"
+                            id="id_username"
+                            class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                            placeholder="Введите логин"
+                            value="{{ form.username.value|default:'' }}"
+                            required
+                            autocomplete="username"
+                        >
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.username.errors %}
+                                    ❌ {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
-                    
+
+                    <!-- Пароль -->
                     <div class="mb-3">
                         <label for="id_password" class="form-label">Пароль</label>
-                        <input type="password" name="password" id="id_password" 
-                               class="form-control" placeholder="Введите пароль" required>
+                        <input
+                            type="password"
+                            name="password"
+                            id="id_password"
+                            class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                            placeholder="Введите пароль"
+                            required
+                            autocomplete="current-password"
+                        >
+                        {% if form.password.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.password.errors %}
+                                    ❌ {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
-                    
+
+                    <!-- Общие ошибки -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     <button type="submit" class="btn btn-dark w-100">
                         <i class="bi bi-box-arrow-in-right"></i> Войти
                     </button>
-                    
+
                     <p class="text-center mt-3 mb-0">
-                        Ещё не зарегистрированы? 
+                        Ещё не зарегистрированы?
                         <a href="{% url 'register' %}" class="text-dark fw-bold">Регистрация</a>
                     </p>
                 </form>
@@ -38,4 +78,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'courses/js/login_validation.js' %}"></script>
 {% endblock %}

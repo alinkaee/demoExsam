@@ -53,18 +53,29 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
 
-            if user is not None:
-                login(request, user)
-                messages.success(request, f'Добро пожаловать, {username}!')
+            # Проверяем существует ли пользователь
+            user_exists = User.objects.filter(username=username).exists()
 
-                # Проверяем, админ ли это
-                if username == 'Admin26' and user.check_password('Demo20'):
-                    return redirect('admin_panel')
-                return redirect('profile')
+            if not user_exists:
+                # Пользователь не найден — ошибка в логине
+                form.add_error('username', 'Пользователь с таким логином не найден')
+                messages.error(request, 'Пользователь с таким логином не найден')
             else:
-                messages.error(request, 'Неверный логин или пароль')
+                # Пользователь есть — проверяем пароль
+                user = authenticate(request, username=username, password=password)
+
+                if user is not None:
+                    login(request, user)
+                    messages.success(request, f'Добро пожаловать, {username}!')
+
+                    if username == 'admin26' and user.check_password('demo20'):
+                        return redirect('admin_panel')
+                    return redirect('profile')
+                else:
+                    # Пароль неверный
+                    form.add_error('password', 'Неверный пароль')
+                    messages.error(request, 'Неверный пароль')
         else:
             messages.error(request, 'Пожалуйста, исправьте ошибки в форме')
     else:
