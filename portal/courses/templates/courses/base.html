@@ -1,10 +1,130 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учусь РФ</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Шрифты -->
+    <link rel="stylesheet" href="{% static 'courses/css/fonts.css' %}">
+
+    <!-- Основные стили -->
+    <link rel="stylesheet" href="{% static 'courses/css/style.css' %}">
+
+    <link rel="icon" href="{% static 'courses/img/logo.png' %}" type="image/png">
 </head>
 <body>
+    <!-- Навигация -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom border-primary border-2 sticky-top">
+        <div class="container">
+            <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center">
+                <svg class="me-2" width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="8" fill="#0d47a1"/>
+                    <path d="M20 8L8 16V32H32V16L20 8Z" fill="white" opacity="0.9"/>
+                    <path d="M14 20L19 25L26 15" stroke="#0d47a1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="fw-bold fs-5">Учусь РФ</span>
+            </a>
 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
+                    {% if user.is_authenticated %}
+                        {% if user.username == 'admin26' or user.username == 'Admin26' %}
+                            <li class="nav-item">
+                                <a href="{% url 'admin_panel' %}" class="nav-link">
+                                    <i class="bi bi-speedometer2"></i> Панель администратора
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a href="{% url 'profile' %}" class="nav-link">
+                                    <i class="bi bi-journal-text"></i> Мои заявки
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'create_application' %}" class="nav-link">
+                                    <i class="bi bi-plus-circle"></i> Новая заявка
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a href="{% url 'logout' %}" class="nav-link text-danger">
+                                <i class="bi bi-box-arrow-right"></i> Выйти
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <span class="badge bg-primary">
+                                <i class="bi bi-person"></i> {{ user.username }}
+                            </span>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="{% url 'login' %}" class="nav-link">
+                                <i class="bi bi-box-arrow-in-right"></i> Войти
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'register' %}" class="btn btn-dark btn-sm">
+                                <i class="bi bi-person-plus"></i> Регистрация
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <main class="container py-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert
+                    {% if message.tags == 'success' %}alert-success
+                    {% elif message.tags == 'error' %}alert-danger
+                    {% elif message.tags == 'warning' %}alert-warning
+                    {% else %}alert-info{% endif %}
+                    alert-dismissible fade show auto-dismiss" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Авто-скрытие уведомлений -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Находим все уведомления с классом auto-dismiss
+            const alerts = document.querySelectorAll('.alert.auto-dismiss');
+
+            alerts.forEach(function(alert) {
+                // Скрываем через 3 секунды
+                setTimeout(function() {
+                    // Используем Bootstrap Alert API для закрытия
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 3000);
+            });
+        });
+    </script>
+
+    <script src="{% static 'courses/js/main.js' %}"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

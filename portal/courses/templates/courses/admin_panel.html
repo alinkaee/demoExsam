@@ -1,0 +1,78 @@
+{% extends 'courses/base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Панель администратора</h2>
+
+<!-- Вкладки -->
+<div class="admin-tabs">
+    <button class="tab-btn active" onclick="switchTab('applications')">Заявки</button>
+    <button class="tab-btn" onclick="switchTab('reviews')">Отзывы</button>
+</div>
+
+<!-- Вкладка заявок -->
+<div id="tab-applications" class="tab-content active">
+    <div class="admin-controls">
+        <select id="status-filter">
+            <option value="all">Все статусы</option>
+            <option value="new">Новая</option>
+            <option value="in_progress">Идет обучение</option>
+            <option value="completed">Обучение завершено</option>
+        </select>
+        <input type="text" id="search-input" placeholder="Поиск по логину или курсу">
+        <select id="sort-select">
+            <option value="-created_at">Сначала новые</option>
+            <option value="created_at">Сначала старые</option>
+            <option value="user__username">По логину</option>
+            <option value="course">По курсу</option>
+            <option value="status">По статусу</option>
+        </select>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table" id="applications-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Пользователь</th>
+                    <th>Курс</th>
+                    <th>Дата начала</th>
+                    <th>Оплата</th>
+                    <th>Статус</th>
+                    <th>Действие</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pagination-applications" class="pagination"></div>
+</div>
+
+<!-- Вкладка отзывов -->
+<div id="tab-reviews" class="tab-content">
+    <div class="admin-controls">
+        <input type="text" id="reviews-search" placeholder="Поиск по логину, курсу или тексту отзыва">
+    </div>
+
+    <div class="table-responsive">
+        <table class="table" id="reviews-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Пользователь</th>
+                    <th>Курс</th>
+                    <th>Отзыв</th>
+                    <th>Дата</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pagination-reviews" class="pagination"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'courses/js/admin_panel.js' %}"></script>
+{% endblock %}
