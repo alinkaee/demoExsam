@@ -1,0 +1,68 @@
+{% extends 'courses/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">
+                    <i class="bi bi-plus-circle"></i> Новая заявка
+                </h2>
+
+                <form method="post" id="application-form" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Курс -->
+                    <div class="mb-3">
+                        <label for="id_course" class="form-label">Наименование курса</label>
+                        <select name="course" id="id_course" class="form-select" required>
+                            <option value="">Выберите курс</option>
+                            <option value="qualification">Курс по повышению квалификации</option>
+                            <option value="retraining">Курс по переподготовке</option>
+                            <option value="safety">Курс по охране труда</option>
+                        </select>
+                        <div class="error-message" id="course-error"></div>
+                    </div>
+
+                    <!-- Дата -->
+                    <div class="mb-3">
+                        <label for="id_start_date" class="form-label">Желаемая дата начала обучения</label>
+                        <input
+                            type="text"
+                            name="start_date"
+                            id="id_start_date"
+                            class="form-control"
+                            placeholder="ДД.ММ.ГГГГ"
+                            maxlength="10"
+                            required
+                            data-mask="date"
+                        >
+                        <div class="form-text">Введите дату в формате ДД.ММ.ГГГГ</div>
+                        <div class="error-message" id="date-error"></div>
+                    </div>
+
+                    <!-- Способ оплаты -->
+                    <div class="mb-3">
+                        <label for="id_payment_method" class="form-label">Способ оплаты</label>
+                        <select name="payment_method" id="id_payment_method" class="form-select" required>
+                            <option value="">Выберите способ оплаты</option>
+                            <option value="cash">Наличными</option>
+                            <option value="transfer">Переводом по номеру телефона</option>
+                        </select>
+                        <div class="error-message" id="payment-error"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100">
+                        <i class="bi bi-send"></i> Отправить заявку
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'courses/js/date_mask.js' %}"></script>
+{% endblock %}
