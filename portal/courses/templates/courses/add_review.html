@@ -1,0 +1,9 @@
+{% extends 'courses/base.html' %}
+{% block content %}
+<h2>Отзыв о курсе: {{ app.get_course_display }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Отправить отзыв</button>
+</form>
+{% endblock %}

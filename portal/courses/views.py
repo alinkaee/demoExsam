@@ -243,7 +243,7 @@ def admin_reviews_data(request):
 
     reviews = reviews.order_by('-created_at')
 
-    paginator = Paginator(reviews, 4)  # ИЗМЕНИЛИ С 10 НА 4
+    paginator = Paginator(reviews, 4)
     page_obj = paginator.get_page(page)
 
     data = {
@@ -277,7 +277,6 @@ def admin_reviews_data(request):
     page_number = int(request.GET.get('page', 1))
     per_page = 10
 
-    # 🔥 Важно: select_related для оптимизации запросов
     reviews = Review.objects.select_related(
         'application__user'
     ).order_by('-created_at')
@@ -294,15 +293,14 @@ def admin_reviews_data(request):
     paginator = Paginator(reviews, per_page)
     page_obj = paginator.get_page(page_number)
 
-    # 🎯 Сериализация — поля должны точно совпадать с тем, что ждёт JS!
     reviews_data = []
     for r in page_obj:
         reviews_data.append({
             'id': r.id,
-            'username': r.application.user.username,  # ← JS ждёт 'username'
-            'course': r.application.get_course_display(),  # ← читаемое название курса
-            'text': r.text,  # ← полный текст
-            'created_at': r.created_at.strftime('%d.%m.%Y %H:%M'),  # ← формат даты
+            'username': r.application.user.username,
+            'course': r.application.get_course_display(),
+            'text': r.text,
+            'created_at': r.created_at.strftime('%d.%m.%Y %H:%M'),
         })
 
     return JsonResponse({
@@ -333,3 +331,34 @@ def change_status(request):
             return JsonResponse({'error': 'Заявка не найдена'}, status=404)
 
     return JsonResponse({'error': 'Метод не поддерживается'}, status=400)
+
+
+def check_unique(request):
+    field = request.GET.get('field')
+    value = request.GET.get('value', '').strip()
+
+    if not field or not value:
+        return JsonResponse({'valid': True})
+
+    if field == 'username':
+        if User.objects.filter(username=value).exists():
+            return JsonResponse({
+                'valid': False,
+                'message': 'Пользователь с таким логином уже зарегистрирован'
+            })
+
+    elif field == 'email':
+        if User.objects.filter(email=value).exists():
+            return JsonResponse({
+                'valid': False,
+                'message': 'Пользователь с таким email уже зарегистрирован'
+            })
+
+    elif field == 'phone':
+        if UserProfile.objects.filter(phone=value).exists():
+            return JsonResponse({
+                'valid': False,
+                'message': 'Пользователь с таким телефоном уже зарегистрирован'
+            })
+
+        return JsonResponse({'valid': True})

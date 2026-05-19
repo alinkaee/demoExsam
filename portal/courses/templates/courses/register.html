@@ -1,0 +1,80 @@
+{% extends 'courses/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">
+                    <i class="bi bi-person-plus"></i> Регистрация
+                </h2>
+                
+                <form method="post" id="register-form" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Логин</label>
+                        <input type="text" name="username" id="id_username" 
+                               class="form-control" placeholder="Введите логин"
+                               minlength="6" required>
+                        <div class="form-text">Только латиница и цифры, минимум 6 символов</div>
+                        <div class="invalid-feedback" id="username-error"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Пароль</label>
+                        <input type="password" name="password" id="id_password" 
+                               class="form-control" placeholder="Минимум 8 символов"
+                               minlength="8" required>
+                        <div class="form-text">Минимум 8 символов</div>
+                        <div class="invalid-feedback" id="password-error"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_password2" class="form-label">Повторите пароль</label>
+                        <input type="password" name="password2" id="id_password2" 
+                               class="form-control" placeholder="Повторите пароль" required>
+                        <div class="invalid-feedback" id="password2-error"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_full_name" class="form-label">ФИО</label>
+                        <input type="text" name="full_name" id="id_full_name" 
+                               class="form-control" placeholder="Иванов Иван Иванович" required>
+                        <div class="form-text">Только кириллица и пробелы</div>
+                        <div class="invalid-feedback" id="full_name-error"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_phone" class="form-label">Телефон</label>
+                        <input type="tel" name="phone" id="id_phone"
+                               class="form-control" placeholder="8(___)___-__-__" required>
+                        <div class="form-text">Формат: 8(XXX)XXX-XX-XX</div>
+                        <div class="error-message" id="phone-error"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Email</label>
+                        <input type="email" name="email" id="id_email" 
+                               class="form-control" placeholder="example@mail.ru" required>
+                        <div class="invalid-feedback" id="email-error"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-dark w-100">
+                        <i class="bi bi-check-circle"></i> Зарегистрироваться
+                    </button>
+                    
+                    <p class="text-center mt-3 mb-0">
+                        Уже есть аккаунт? <a href="{% url 'login' %}" class="text-dark fw-bold">Войти</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'courses/js/validation.js' %}"></script>
+{% endblock %}

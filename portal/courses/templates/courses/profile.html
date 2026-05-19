@@ -1,0 +1,125 @@
+{% extends 'courses/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="slider-section">
+            <div class="slider shadow-sm">
+                <div class="slides">
+                    <img src="{% static 'courses/img/slide1.jpg' %}" alt="Слайд 1">
+                    <img src="{% static 'courses/img/slide2.jpg' %}" alt="Слайд 2">
+                    <img src="{% static 'courses/img/slide3.jpg' %}" alt="Слайд 3">
+                    <img src="{% static 'courses/img/slide4.jpg' %}" alt="Слайд 4">
+                </div>
+                <button class="prev">&#10094;</button>
+                <button class="next">&#10095;</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<h2>Мои заявки</h2>
+
+
+
+{% if applications %}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Курс</th>
+                <th>Дата начала</th>
+                <th>Оплата</th>
+                <th>Статус</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td>{{ app.get_course_display }}</td>
+                <td>{{ app.start_date|date:"d.m.Y" }}</td>
+                <td>{{ app.get_payment_method_display }}</td>
+                <td>
+                    <span class="status-badge status-{{ app.status }}">
+                        {{ app.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    {% if app.status == 'completed' and not app.review %}
+                        <button class="btn btn-review" onclick="openReviewModal({{ app.id }}, '{{ app.get_course_display|escapejs }}')">
+                            Оставить отзыв
+                        </button>
+                    {% elif app.review %}
+                        <span class="review-done">✓ Отзыв оставлен</span>
+                    {% else %}
+                        <span class="review-wait">Ожидайте завершения</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>У вас пока нет заявок.</p>
+    <a href="{% url 'create_application' %}" class="btn">Создать первую заявку</a>
+</div>
+{% endif %}
+
+<!-- Модальное окно для отзыва -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Оставить отзыв</h3>
+                <button class="close-modal" onclick="closeReviewModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="course-name" id="modalCourseName"></p>
+                <form id="reviewForm" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="appId" name="app_id">
+                    <div class="form-group">
+                        <label for="reviewText">Текст отзыва:</label>
+                        <textarea
+                            id="reviewText"
+                            name="text"
+                            rows="5"
+                            placeholder="Опишите ваше впечатление о курсе, качестве обучения, преподавателях..."
+                            required
+                        ></textarea>
+                        <div class="error-message" id="reviewError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Оценка курса:</label>
+                        <div class="rating">
+                            <input type="radio" id="star5" name="rating" value="5">
+                            <label for="star5" title="Отлично">★</label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4" title="Хорошо">★</label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3" title="Нормально">★</label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2" title="Плохо">★</label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1" title="Ужасно">★</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeReviewModal()">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'courses/js/review_modal.js' %}"></script>
+{% endblock %}
